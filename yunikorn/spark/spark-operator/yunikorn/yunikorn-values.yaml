@@ -1,0 +1,12 @@
+image:
+  pullPolicy: IfNotPresent
+
+admissionController:
+  image:
+    pullPolicy: IfNotPresent
+
+web:
+  image:
+    pullPolicy: IfNotPresent
+
+embedAdmissionController: false

@@ -1,0 +1,76 @@
+#
+# Custom PySpark Word Count Application
+# Based on spark-pi.yaml example with modifications for Python
+#
+
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: spark-test-dynamic-allocation-low-priority
+  namespace: default
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: spark-test:latest
+  imagePullPolicy: IfNotPresent  # Use local Docker image if available
+  mainApplicationFile: local:///opt/spark/work-dir/spark-test-dynamic-allocation.py
+  arguments:
+    - "--sleep-seconds"
+    - "30"
+  sparkVersion: 4.0.0
+  sparkConf:
+    # Enable dynamic allocation
+    "spark.dynamicAllocation.enabled": "true"
+    # Minimum number of executors
+    "spark.dynamicAllocation.minExecutors": "1"
+    # Maximum number of executors
+    "spark.dynamicAllocation.maxExecutors": "8"
+    # Initial number of executors (optional)
+    "spark.dynamicAllocation.initialExecutors": "0"
+    # How long an executor can be idle before being removed (default: 60s)
+    "spark.dynamicAllocation.executorIdleTimeout": "10s"
+    # Shuffle tracking is required for dynamic allocation on Kubernetes
+    # (replaces the external shuffle service used in YARN/Standalone)
+    "spark.dynamicAllocation.shuffleTracking.enabled": "true"
+  # Use YuniKorn scheduler
+  batchScheduler: yunikorn
+  batchSchedulerOptions:
+    queue: root.sandbox.tenants.low-priority
+  driver:
+    labels:
+      queue: root.sandbox.tenants.low-priority
+      version: 4.0.0
+    coreRequest: "100m"  # K8s CPU request
+    coreLimit: "1000m"    # K8s CPU limit
+    memory: 480m
+    memoryOverhead: 100m
+    serviceAccount: spark-operator-spark
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+      runAsGroup: 185
+      runAsUser: 185
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
+  executor:
+    labels:
+      queue: root.sandbox.tenants.low-priority
+      version: 4.0.0
+    coreRequest: "100m"  # K8s CPU request
+    coreLimit: "500m"    # K8s CPU limit
+    memory: 480m
+    memoryOverhead: 100m
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+      runAsGroup: 185
+      runAsUser: 185
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault

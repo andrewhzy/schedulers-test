@@ -1,0 +1,61 @@
+apiVersion: v1
+data:
+  queues.yaml: |
+    partitions:
+      - name: default
+        placementrules:
+        - name: provided
+        - name: fixed
+          value: root.default
+        queues:
+        - name: root
+          queues:
+          - name: default
+            submitacl: '*'
+          - name: sandbox
+            resources:
+              max:
+                {memory: 10000Mi, vcore: 2500m}
+            queues:
+            - name: tenants
+              properties:
+                preemption.policy: fence
+                preemption.delay: 10s
+              queues:
+              - name: normal-priority
+                submitacl: '*'
+                resources:
+                  guaranteed:
+                    {memory: 3200Mi, vcore: 800m}
+                properties:
+                  priority.offset: "0"
+              - name: high-priority
+                submitacl: '*'
+                resources:
+                  guaranteed:
+                    {memory: 3200Mi, vcore: 800m}
+                properties:
+                  priority.offset: "1000"
+              - name: low-priority
+                submitacl: '*'
+                resources:
+                  guaranteed:
+                    {memory: 3200Mi, vcore: 800m}
+                properties:
+                  priority.offset: "-1000"
+            - name: system
+              queues:
+              - name: system-low
+                submitacl: '*'
+                properties:
+                  priority.offset: "-9999"
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"queues.yaml":"partitions:\n  - name: default\n    placementrules:\n    - name: provided\n    - name: fixed\n      value: root.default\n    queues:\n    - name: root\n      queues:\n      - name: default\n        submitacl: '*'\n      - name: sandbox\n        resources:\n          max:\n            {memory: 8000Mi, vcore: 1000m}\n        queues:\n        - name: tenants\n          properties:\n            preemption.policy: fence\n            preemption.delay: 10s\n          queues:\n          - name: normal-priority\n            submitacl: '*'\n            resources:\n              guaranteed:\n                {memory: 4000Mi, vcore: 1000m}\n            properties:\n              priority.offset: \"0\"\n          - name: high-priority\n            submitacl: '*'\n            resources:\n              guaranteed:\n                {memory: 4000Mi, vcore: 1000m}\n            properties:\n              priority.offset: \"1000\"\n          - name: low-priority\n            submitacl: '*'\n            resources:\n              guaranteed:\n                {memory: 4000Mi, vcore: 1000m}\n            properties:\n              priority.offset: \"-1000\"\n        - name: system\n          queues:\n          - name: system-low\n            submitacl: '*'\n            properties:\n              priority.offset: \"-9999\"\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"yunikorn-configs","namespace":"yunikorn"}}
+  creationTimestamp: "2025-12-26T04:31:33Z"
+  name: yunikorn-configs
+  namespace: yunikorn
+  resourceVersion: "868843"
+  uid: b358a769-6509-4410-8c4e-401bb73d9d5e

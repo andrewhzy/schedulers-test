@@ -1,0 +1,67 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: spark-simple-job-
+  namespace: default
+spec:
+  entrypoint: spark-job
+  serviceAccountName: workflow-spark-sa
+
+  templates:
+  - name: spark-job
+    resource:
+      action: create
+      setOwnerReference: true
+      successCondition: status.applicationState.state == COMPLETED
+      failureCondition: status.applicationState.state == FAILED
+      manifest: |
+        apiVersion: sparkoperator.k8s.io/v1beta2
+        kind: SparkApplication
+        metadata:
+          generateName: spark-pi-
+          namespace: default
+          labels:
+            yunikorn.apache.org/queue: root.default
+            # yunikorn.apache.org/app-id: spark-pi
+        spec:
+          type: Python
+          mode: cluster
+          image: apache/spark:4.0.0-python3
+          imagePullPolicy: IfNotPresent
+          mainApplicationFile: local:///opt/spark/examples/src/main/python/pi.py
+          sparkVersion: "4.0.0"
+          pythonVersion: "3"
+
+          arguments:
+            - "10000"
+
+          sparkConf:
+            "spark.ui.enabled": "true"
+            "spark.dynamicAllocation.enabled": "true"
+            "spark.dynamicAllocation.initialExecutors": "3"
+            "spark.dynamicAllocation.minExecutors": "1"
+            "spark.dynamicAllocation.maxExecutors": "10"
+            "spark.dynamicAllocation.shuffleTracking.enabled": "true"
+            "spark.kubernetes.allocation.batch.size": "5"
+
+          driver:
+            coreRequest: "100m"  # K8s CPU request
+            coreLimit: "500m"    # K8s CPU limit
+            memory: 480m
+            memoryOverhead: 100m
+            serviceAccount: spark-operator-spark
+            labels:
+              version: "4.0.0"
+
+          executor:
+            coreRequest: "100m"  # K8s CPU request
+            coreLimit: "500m"    # K8s CPU limit
+            memory: 480m
+            memoryOverhead: 100m
+            labels:
+              version: "4.0.0"
+
+          restartPolicy:
+            type: OnFailure
+            onFailureRetries: 3
+            onFailureRetryInterval: 10

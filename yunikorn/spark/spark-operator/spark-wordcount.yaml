@@ -1,0 +1,57 @@
+#
+# Custom PySpark Word Count Application
+# Based on spark-pi.yaml example with modifications for Python
+#
+
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: spark-wordcount
+  namespace: default
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: spark-wordcount:1.0.1
+  imagePullPolicy: IfNotPresent  # Always use local Docker image
+  mainApplicationFile: local:///opt/spark/work-dir/wordcount.py
+  # arguments:
+  # - "file:///opt/spark/work-dir/data/sample-text.txt"  # Input path
+  # - "file:///tmp/wordcount-output"  # Output path
+  sparkVersion: 4.0.0
+  driver:
+    labels:
+      version: 4.0.0
+    coreRequest: "100m"  # K8s CPU request
+    coreLimit: "500m"    # K8s CPU limit
+    memory: 480m
+    memoryOverhead: 100m
+    serviceAccount: spark-operator-spark
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+      runAsGroup: 185
+      runAsUser: 185
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
+  executor:
+    labels:
+      version: 4.0.0
+    instances: 2
+    coreRequest: "100m"  # K8s CPU request
+    coreLimit: "500m"    # K8s CPU limit
+    memory: 480m
+    memoryOverhead: 100m
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+      runAsGroup: 185
+      runAsUser: 185
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
