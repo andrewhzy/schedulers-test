@@ -36,10 +36,10 @@ spec:
   # Use YuniKorn scheduler
   batchScheduler: yunikorn
   batchSchedulerOptions:
-    queue: root.sandbox.tenants.high-priority
+    queue: root.ns-a.tenant-high-priority
   driver:
     labels:
-      queue: root.sandbox.tenants.high-priority
+      queue: root.ns-a.tenant-high-priority
       version: 4.0.0
     coreRequest: "100m"  # K8s CPU request
     coreLimit: "1000m"    # K8s CPU limit
@@ -58,7 +58,7 @@ spec:
         type: RuntimeDefault
   executor:
     labels:
-      queue: root.sandbox.tenants.high-priority
+      queue: root.ns-a.tenant-high-priority
       version: 4.0.0
     coreRequest: "100m"  # K8s CPU request
     coreLimit: "500m"    # K8s CPU limit
