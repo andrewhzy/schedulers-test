@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: spark-pi-
+  generateName: spark-pi-wf-
 spec:
   entrypoint: spark-pi
   templates:
@@ -11,11 +11,11 @@ spec:
       image: apache/spark:3.5.7
       resources:
         requests:
-          cpu: "500m"
-          memory: "1Gi"
+          cpu: "100m"
+          memory: "200m"
         limits:
-          cpu: "1000m"
-          memory: "2Gi"
+          cpu: "500m"
+          memory: "1G"
       command: ["/opt/spark/bin/spark-submit"]
       args:
       - --master
@@ -33,15 +33,13 @@ spec:
       - --conf
       - spark.kubernetes.authenticate.driver.serviceAccountName=spark
       - --conf
-      - spark.executor.instances=1
+      - spark.executor.instances=4
       - --conf
-      - spark.executor.cores=1
+      - spark.kubernetes.executor.request.cores=0.1
       - --conf
-      - spark.executor.memory=1G
+      - spark.kubernetes.executor.limit.cores=0.5
       - --conf
-      - spark.kubernetes.executor.request.cores=0.2
-      - --conf
-      - spark.kubernetes.executor.limit.cores=1
+      - spark.executor.memory=512m
       - --conf
       - spark.network.timeout=600s
       - --conf
@@ -51,4 +49,4 @@ spec:
       - --conf
       - spark.scheduler.minRegisteredResourcesRatio=0.0
       - local:///opt/spark/examples/jars/spark-examples_2.12-3.5.7.jar
-      - "10000"
+      - "100000"
