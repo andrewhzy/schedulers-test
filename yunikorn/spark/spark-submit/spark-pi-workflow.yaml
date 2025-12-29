@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: spark-pi-
+spec:
+  entrypoint: spark-pi
+  templates:
+  - name: spark-pi
+    serviceAccountName: spark
+    container:
+      image: apache/spark:3.5.7
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "1000m"
+          memory: "2Gi"
+      command: ["/opt/spark/bin/spark-submit"]
+      args:
+      - --master
+      - k8s://https://kubernetes.default.svc:443
+      - --deploy-mode
+      - cluster
+      - --name
+      - spark-pi
+      - --class
+      - org.apache.spark.examples.SparkPi
+      - --conf
+      - spark.kubernetes.container.image=apache/spark:3.5.7
+      - --conf
+      - spark.kubernetes.namespace=argo
+      - --conf
+      - spark.kubernetes.authenticate.driver.serviceAccountName=spark
+      - --conf
+      - spark.executor.instances=1
+      - --conf
+      - spark.executor.cores=1
+      - --conf
+      - spark.executor.memory=1G
+      - --conf
+      - spark.kubernetes.executor.request.cores=0.2
+      - --conf
+      - spark.kubernetes.executor.limit.cores=1
+      - --conf
+      - spark.network.timeout=600s
+      - --conf
+      - spark.executor.heartbeatInterval=60s
+      - --conf
+      - spark.scheduler.maxRegisteredResourcesWaitingTime=300s
+      - --conf
+      - spark.scheduler.minRegisteredResourcesRatio=0.0
+      - local:///opt/spark/examples/jars/spark-examples_2.12-3.5.7.jar
+      - "10000"
