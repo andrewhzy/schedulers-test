@@ -55,25 +55,3 @@ data:
                   {memory: 3000Mi, vcore: 600m}
               properties:
                 priority.offset: "-1000"
-          - name: ns-b
-            resources:
-              max:
-                {memory: 6000Mi, vcore: 1200m}
-            properties:
-              preemption.policy: fence
-              preemption.delay: 10s
-            queues:
-            - name: tenant-normal-priority
-              submitacl: '*'
-              resources:
-                guaranteed:
-                  {memory: 3000Mi, vcore: 600m}
-              properties:
-                priority.offset: "0"
-            - name: tenant-low-priority
-              submitacl: '*'
-              resources:
-                guaranteed:
-                  {memory: 3000Mi, vcore: 600m}
-              properties:
-                priority.offset: "-1000"
