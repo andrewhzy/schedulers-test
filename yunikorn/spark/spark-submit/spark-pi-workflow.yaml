@@ -4,6 +4,10 @@ metadata:
   generateName: spark-pi-wf-
 spec:
   entrypoint: spark-pi
+  arguments:
+    parameters:
+    - name: queue
+      value: root.default  # default value
   templates:
   - name: spark-pi
     serviceAccountName: spark
@@ -54,10 +58,10 @@ spec:
       - --conf
       - spark.kubernetes.scheduler.name=yunikorn
       - --conf
-      - spark.kubernetes.driver.label.queue=root.ns-a.tenant-low-priority
+      - spark.kubernetes.driver.label.queue={{workflow.parameters.queue}}
       - --conf
       - spark.kubernetes.driver.label.yunikorn.apache.org/allow-preemption=false
       - --conf
-      - spark.kubernetes.executor.label.queue=root.ns-a.tenant-low-priority
+      - spark.kubernetes.executor.label.queue={{workflow.parameters.queue}}
       - local:///opt/spark/examples/jars/spark-examples_2.12-3.5.7.jar
       - "100000"
