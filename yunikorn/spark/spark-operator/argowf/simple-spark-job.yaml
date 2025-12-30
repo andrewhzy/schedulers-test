@@ -20,9 +20,6 @@ spec:
         metadata:
           generateName: spark-pi-
           namespace: default
-          labels:
-            yunikorn.apache.org/queue: root.default
-            # yunikorn.apache.org/app-id: spark-pi
         spec:
           type: Python
           mode: cluster
@@ -34,7 +31,7 @@ spec:
 
           arguments:
             - "10000"
-
+          batchScheduler: yunikorn          
           sparkConf:
             "spark.ui.enabled": "true"
             "spark.dynamicAllocation.enabled": "true"
@@ -52,6 +49,7 @@ spec:
             serviceAccount: spark-operator-spark
             labels:
               version: "4.0.0"
+              queue: root.ns-a.tenant-low-priority
 
           executor:
             coreRequest: "100m"  # K8s CPU request
@@ -60,6 +58,7 @@ spec:
             memoryOverhead: 100m
             labels:
               version: "4.0.0"
+              queue: root.ns-a.tenant-low-priority
 
           restartPolicy:
             type: OnFailure
