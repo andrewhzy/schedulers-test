@@ -9,13 +9,6 @@ spec:
     serviceAccountName: spark
     container:
       image: apache/spark:3.5.7
-      resources:
-        requests:
-          cpu: "100m"
-          memory: "200m"
-        limits:
-          cpu: "500m"
-          memory: "1G"
       command: ["/opt/spark/bin/spark-submit"]
       args:
       - --master
@@ -35,11 +28,21 @@ spec:
       - --conf
       - spark.executor.instances=4
       - --conf
-      - spark.kubernetes.executor.request.cores=0.1
+      - spark.kubernetes.driver.request.cores=0.2
+      - --conf
+      - spark.kubernetes.driver.limit.cores=0.5
+      - --conf
+      - spark.driver.memory=1024m
+      - --conf
+      - spark.driver.memoryOverhead=200m
+      - --conf
+      - spark.kubernetes.executor.request.cores=0.2
       - --conf
       - spark.kubernetes.executor.limit.cores=0.5
       - --conf
       - spark.executor.memory=512m
+      - --conf
+      - spark.executor.memoryOverhead=100m
       - --conf
       - spark.network.timeout=600s
       - --conf
@@ -48,5 +51,13 @@ spec:
       - spark.scheduler.maxRegisteredResourcesWaitingTime=300s
       - --conf
       - spark.scheduler.minRegisteredResourcesRatio=0.0
+      - --conf
+      - spark.kubernetes.scheduler.name=yunikorn
+      - --conf
+      - spark.kubernetes.driver.label.queue=root.ns-a.tenant-low-priority
+      - --conf
+      - spark.kubernetes.driver.label.yunikorn.apache.org/allow-preemption=false
+      - --conf
+      - spark.kubernetes.executor.label.queue=root.ns-a.tenant-low-priority
       - local:///opt/spark/examples/jars/spark-examples_2.12-3.5.7.jar
       - "100000"
