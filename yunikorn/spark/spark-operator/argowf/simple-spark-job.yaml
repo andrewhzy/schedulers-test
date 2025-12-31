@@ -23,21 +23,20 @@ spec:
         spec:
           type: Python
           mode: cluster
-          image: apache/spark:4.0.0-python3
+          image: apache/spark:3.5.7
           imagePullPolicy: IfNotPresent
           mainApplicationFile: local:///opt/spark/examples/src/main/python/pi.py
-          sparkVersion: "4.0.0"
           pythonVersion: "3"
 
           arguments:
-            - "10000"
+            - "1000"
           batchScheduler: yunikorn          
           sparkConf:
             "spark.ui.enabled": "true"
             "spark.dynamicAllocation.enabled": "true"
             "spark.dynamicAllocation.initialExecutors": "3"
             "spark.dynamicAllocation.minExecutors": "1"
-            "spark.dynamicAllocation.maxExecutors": "10"
+            "spark.dynamicAllocation.maxExecutors": "4"
             "spark.dynamicAllocation.shuffleTracking.enabled": "true"
             "spark.kubernetes.allocation.batch.size": "5"
 
@@ -48,7 +47,6 @@ spec:
             memoryOverhead: 100m
             serviceAccount: spark-operator-spark
             labels:
-              version: "4.0.0"
               queue: root.ns-a.tenant-low-priority
 
           executor:
@@ -57,7 +55,6 @@ spec:
             memory: 480m
             memoryOverhead: 100m
             labels:
-              version: "4.0.0"
               queue: root.ns-a.tenant-low-priority
 
           restartPolicy:
