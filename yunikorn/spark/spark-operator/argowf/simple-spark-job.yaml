@@ -29,7 +29,7 @@ spec:
           pythonVersion: "3"
 
           arguments:
-            - "1000"
+            - "10000"
           batchScheduler: yunikorn          
           sparkConf:
             "spark.ui.enabled": "true"
