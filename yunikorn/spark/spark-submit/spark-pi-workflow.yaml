@@ -8,10 +8,8 @@ spec:
     parameters:
     - name: queue
       value: root.default  # default value
-    - name: image-name
-      value: apache/spark
-    - name: tag
-      value: 3.5.7
+    - name: image
+      value: apache/spark:3.5.7
     - name: namespace
       value: yunikorn-spark-submit
     - name: partitions
@@ -20,7 +18,7 @@ spec:
   - name: spark-pi
     serviceAccountName: spark
     container:
-      image: "{{workflow.parameters.image-name}}:{{workflow.parameters.tag}}"
+      image: "{{workflow.parameters.image}}"
       command: ["/opt/spark/bin/spark-submit"]
       args:
       - --master
@@ -30,7 +28,7 @@ spec:
       - --name
       - spark-pi
       - --conf
-      - spark.kubernetes.container.image={{workflow.parameters.image-name}}:{{workflow.parameters.tag}}
+      - spark.kubernetes.container.image={{workflow.parameters.image}}
       - --conf
       - spark.kubernetes.namespace={{workflow.parameters.namespace}}
       - --conf
