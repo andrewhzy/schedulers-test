@@ -14,6 +14,8 @@ spec:
       value: 3.5.7
     - name: namespace
       value: yunikorn-spark-submit
+    - name: partitions
+      value: "10000"
   templates:
   - name: spark-pi
     serviceAccountName: spark
@@ -27,8 +29,6 @@ spec:
       - cluster
       - --name
       - spark-pi
-      - --class
-      - org.apache.spark.examples.SparkPi
       - --conf
       - spark.kubernetes.container.image={{workflow.parameters.image-name}}:{{workflow.parameters.tag}}
       - --conf
@@ -69,5 +69,5 @@ spec:
       - spark.kubernetes.driver.label.yunikorn.apache.org/allow-preemption=false
       - --conf
       - spark.kubernetes.executor.label.queue={{workflow.parameters.queue}}
-      - local:///opt/spark/examples/jars/spark-examples_2.12-{{workflow.parameters.tag}}.jar
-      - "100000"
+      - local:///opt/spark/examples/src/main/python/pi.py
+      - "{{workflow.parameters.partitions}}"
