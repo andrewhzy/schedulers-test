@@ -13,7 +13,11 @@ spec:
     - name: namespace
       value: yunikorn-spark-submit
     - name: partitions
-      value: "10000"
+      value: 10000
+    - name: executors
+      value: 1
+    - name: scheduler
+      value: default-scheduler
   templates:
   - name: spark-pi
     serviceAccountName: spark
@@ -34,7 +38,7 @@ spec:
       - --conf
       - spark.kubernetes.authenticate.driver.serviceAccountName=spark
       - --conf
-      - spark.executor.instances=4
+      - spark.executor.instances={{workflow.parameters.executors}}
       - --conf
       - spark.kubernetes.driver.request.cores=0.2
       - --conf
@@ -60,7 +64,7 @@ spec:
       - --conf
       - spark.scheduler.minRegisteredResourcesRatio=0.0
       - --conf
-      - spark.kubernetes.scheduler.name=yunikorn
+      - spark.kubernetes.scheduler.name={{workflow.parameters.scheduler}}
       - --conf
       - spark.kubernetes.driver.label.queue={{workflow.parameters.queue}}
       - --conf
