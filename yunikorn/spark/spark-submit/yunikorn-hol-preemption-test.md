@@ -23,7 +23,7 @@ screenshot:
 ![alt text](image-2.png)
 
 ## conclusion: 
-with default scheduler and limited resources, there will be HOL blocking, large long-running spark jobs consume all resources will block future jobs in the same the same ns.
+with default scheduler and limited resources, there will be HOL blocking, large long-running spark jobs consume all resources will block future jobs in the same ns.
 
 ---
 
@@ -33,8 +33,7 @@ with default scheduler and limited resources, there will be HOL blocking, large 
 ![alt text](image-3.png)
 
 ### 2. install yunikorn and config queues
-set up 3 queues:
-root.default 
+set up 2 queues:
 root.ns-a.tenant-low-priority 
 -- resource: max{memory: 6000Mi, vcore: 1200m}, guaranteed{memory: 3000Mi, vcore: 600m}
 root.ns-a.tenant-normal-priority 
