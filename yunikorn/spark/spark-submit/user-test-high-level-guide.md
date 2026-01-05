@@ -134,14 +134,6 @@ spec:
       - --conf
       - spark.executor.memoryOverhead=100m
       - --conf
-      - spark.network.timeout=600s
-      - --conf
-      - spark.executor.heartbeatInterval=60s
-      - --conf
-      - spark.scheduler.maxRegisteredResourcesWaitingTime=300s
-      - --conf
-      - spark.scheduler.minRegisteredResourcesRatio=0.0
-      - --conf
       - spark.kubernetes.scheduler.name={{workflow.parameters.scheduler}}
       - --conf
       - spark.kubernetes.driver.label.queue={{workflow.parameters.queue}}
@@ -151,5 +143,4 @@ spec:
       - spark.kubernetes.executor.label.queue={{workflow.parameters.queue}}
       - local:///opt/spark/examples/src/main/python/pi.py
       - "{{workflow.parameters.partitions}}"
-
 ```
