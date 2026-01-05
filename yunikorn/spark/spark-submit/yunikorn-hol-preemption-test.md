@@ -34,8 +34,10 @@ with default scheduler and limited resources, there will be HOL blocking, large 
 
 ### 2. install yunikorn and config queues
 set up 2 queues:
+
 root.ns-a.tenant-low-priority
 -- resource: max{memory: 6000Mi, vcore: 1200m}, guaranteed{memory: 3000Mi, vcore: 600m}
+
 root.ns-a.tenant-normal-priority
 -- resource: max{memory: 6000Mi, vcore: 1200m}, guaranteed{memory: 3000Mi, vcore: 600m}
 ![alt text](image-4.png)
