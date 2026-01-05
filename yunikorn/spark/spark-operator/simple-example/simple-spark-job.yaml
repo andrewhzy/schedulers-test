@@ -13,11 +13,13 @@ spec:
     - name: image
       value: apache/spark:3.5.7
     - name: namespace
-      value: yunikorn-spark-submit
+      value: yunikorn-spark-operator
     - name: partitions
       value: "10000"
     - name: scheduler
       value: yunikorn
+    - name: executors
+      value: 1
 
   templates:
   - name: spark-job
@@ -47,10 +49,11 @@ spec:
           batchScheduler: {{workflow.parameters.scheduler}}          
           sparkConf:
             "spark.ui.enabled": "true"
-            "spark.dynamicAllocation.enabled": "true"
-            "spark.dynamicAllocation.initialExecutors": "2"
-            "spark.dynamicAllocation.minExecutors": "1"
-            "spark.dynamicAllocation.maxExecutors": "4"
+            "spark.executor.instances": "{{workflow.parameters.executors}}"
+            # "spark.dynamicAllocation.enabled": "true"
+            # "spark.dynamicAllocation.initialExecutors": "2"
+            # "spark.dynamicAllocation.minExecutors": "1"
+            # "spark.dynamicAllocation.maxExecutors": "4"
             "spark.dynamicAllocation.shuffleTracking.enabled": "true"
             "spark.kubernetes.allocation.batch.size": "5"
             "spark.kubernetes.authenticate.driver.serviceAccountName": "spark"
