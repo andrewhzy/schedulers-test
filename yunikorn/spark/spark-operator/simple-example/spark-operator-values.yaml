@@ -1,0 +1,5 @@
+# spark-operator-values.yaml
+spark:
+  jobNamespaces:
+    - default
+    - yunikorn-spark-operator
