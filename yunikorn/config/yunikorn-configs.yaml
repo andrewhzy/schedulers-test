@@ -48,8 +48,8 @@ data:
                   {memory: 6000Mi, vcore: 1200m}
                 guaranteed:
                   {memory: 3000Mi, vcore: 600m}
-              properties:
-                priority.offset: "0"
+              # properties:
+              #   priority.offset: "0"
             - name: tenant-low-priority
               submitacl: '*'
               resources:
@@ -57,5 +57,5 @@ data:
                   {memory: 6000Mi, vcore: 1200m}
                 guaranteed:
                   {memory: 3000Mi, vcore: 600m}
-              properties:
-                priority.offset: "-1000"
+              # properties:
+              #   priority.offset: "0"
