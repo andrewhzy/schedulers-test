@@ -40,7 +40,8 @@ root.ns-a.tenant-low-priority
 
 root.ns-a.tenant-normal-priority
 -- resource: max{memory: 6000Mi, vcore: 1200m}, guaranteed{memory: 3000Mi, vcore: 600m}
-![alt text](image-4.png)
+![alt text](image-6.png)
+![alt text](image-5.png)
 
 ### 3. simulate a large long-running spark job which consume all(almost) allocated resources:
 specify yunikorn as the scheduler and the queue with low priority

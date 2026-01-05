@@ -44,6 +44,8 @@ data:
             - name: tenant-normal-priority
               submitacl: '*'
               resources:
+                max:
+                  {memory: 6000Mi, vcore: 1200m}
                 guaranteed:
                   {memory: 3000Mi, vcore: 600m}
               properties:
@@ -51,6 +53,8 @@ data:
             - name: tenant-low-priority
               submitacl: '*'
               resources:
+                max:
+                  {memory: 6000Mi, vcore: 1200m}
                 guaranteed:
                   {memory: 3000Mi, vcore: 600m}
               properties:
