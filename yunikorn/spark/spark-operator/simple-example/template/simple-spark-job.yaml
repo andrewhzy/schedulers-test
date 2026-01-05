@@ -1,0 +1,81 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: spark-simple-job
+  namespace: yunikorn-spark-operator
+spec:
+  entrypoint: spark-job
+
+  arguments:
+    parameters:
+    - name: queue
+      value: root.default  # default value
+    - name: image
+      value: apache/spark:3.5.7
+    - name: namespace
+      value: yunikorn-spark-operator
+    - name: partitions
+      value: "10000"
+    - name: scheduler
+      value: yunikorn
+    - name: executors
+      value: 1
+
+  templates:
+  - name: spark-job
+    serviceAccountName: spark
+    resource:
+      action: create
+      setOwnerReference: true
+      successCondition: status.applicationState.state == COMPLETED
+      failureCondition: status.applicationState.state == FAILED
+      manifest: |
+        apiVersion: sparkoperator.k8s.io/v1beta2
+        kind: SparkApplication
+        metadata:
+          generateName: spark-pi-
+          namespace: {{workflow.parameters.namespace}}
+        spec:
+          type: Python
+          mode: cluster
+          image: {{workflow.parameters.image}}
+          imagePullPolicy: IfNotPresent
+          mainApplicationFile: local:///opt/spark/examples/src/main/python/pi.py
+          pythonVersion: "3"
+          sparkVersion: "3.5.7"
+
+          arguments:
+            - "{{workflow.parameters.partitions}}"
+          batchScheduler: {{workflow.parameters.scheduler}}          
+          sparkConf:
+            "spark.ui.enabled": "true"
+            "spark.executor.instances": "{{workflow.parameters.executors}}"
+            # "spark.dynamicAllocation.enabled": "true"
+            # "spark.dynamicAllocation.initialExecutors": "2"
+            # "spark.dynamicAllocation.minExecutors": "1"
+            # "spark.dynamicAllocation.maxExecutors": "4"
+            "spark.dynamicAllocation.shuffleTracking.enabled": "true"
+            "spark.kubernetes.allocation.batch.size": "5"
+            "spark.kubernetes.authenticate.driver.serviceAccountName": "spark"
+
+          driver:
+            coreRequest: "100m"  # K8s CPU request
+            coreLimit: "500m"    # K8s CPU limit
+            memory: 480m
+            memoryOverhead: 100m
+            serviceAccount: spark-operator-spark
+            labels:
+              queue: {{workflow.parameters.queue}}
+
+          executor:
+            coreRequest: "100m"  # K8s CPU request
+            coreLimit: "500m"    # K8s CPU limit
+            memory: 480m
+            memoryOverhead: 100m
+            labels:
+              queue: {{workflow.parameters.queue}}
+
+          restartPolicy:
+            type: OnFailure
+            onFailureRetries: 3
+            onFailureRetryInterval: 10
