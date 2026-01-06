@@ -34,7 +34,6 @@ with default scheduler and limited resources, there will be HOL blocking, large 
 ![alt text](image-3.png)
 
 ### 2. install yunikorn and config queues
-set up queues
 parent queue:
 ![alt text](image-4.png)
 child: root.ns-a.tenant-a
