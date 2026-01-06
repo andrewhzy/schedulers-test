@@ -12,7 +12,6 @@ spec:
       labels:
         applicationId: pi-job-${TIMESTAMP}
         queue: ${QUEUE}
-        app: test-job
     spec:
       schedulerName: yunikorn
       containers:

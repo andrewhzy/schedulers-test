@@ -19,7 +19,7 @@ data:
           - name: ns-a
             resources:
               max:
-                {memory: 11000Mi, vcore: 3000m}
+                {memory: 11000Mi, vcore: 3600m}
             properties:
               preemption.policy: fence
               preemption.delay: 10s
@@ -28,12 +28,20 @@ data:
               submitacl: '*'
               resources:
                 guaranteed:
-                  {memory: 5000Mi, vcore: 1200m}
+                  {memory: 3500Mi, vcore: 1200m}
               properties:
                 priority.offset: "0"
             - name: tenant-b
+              submitacl: '*'
               resources:
                 guaranteed:
-                  {memory: 5000Mi, vcore: 1200m}
+                  {memory: 3500Mi, vcore: 1200m}
               properties:
                 priority.offset: "0"
+            - name: tenant-c
+              submitacl: '*'
+              resources:
+                guaranteed:
+                  {memory: 3500Mi, vcore: 1200m}
+              properties:
+                priority.offset: "1000"
