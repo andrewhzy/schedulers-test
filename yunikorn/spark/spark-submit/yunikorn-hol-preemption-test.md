@@ -55,6 +55,7 @@ argo submit spark-pi-workflow.yaml \
     -p queue=root.ns-a.tenant-a \
     -p scheduler=yunikorn
 ```
+wait for some momemt will see:
 ![alt text](image-11.png)
 
 ### 4. simulate a small short spark job, which we expect low latency:
@@ -69,9 +70,9 @@ argo submit spark-pi-workflow.yaml \
     -p scheduler=yunikorn
 ```
 wait for some momemt will see:
+![alt text](image-12.png)
 1. sompe of the exec pods of the low priority job was preempted, and new ones created but in pending state.
 2. the normal priority spark job was able to run, because it runs on a different queue with higher priority, and can preempt pods on the low priority queue when it consumes resources less than its guaranteed.
-![alt text](image-12.png)
 
 ## conclusion: 
 with yunikorn scheduler and prioritized queues, HOL blocking can be resolved, large long-running spark jobs running on low priority queues can be preempted by jobs running on higher priority queues. thus jobs with higher priority can get resource to execute.
