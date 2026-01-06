@@ -1,5 +1,6 @@
 # set up yunikorn queue
 ### set up some queues under a parent queue with the same priority, e.g. 2 queeus like this:
+![alt text](image-4.png)
 ![alt text](image-14.png)
 ![alt text](image-13.png)
 
@@ -28,7 +29,7 @@ data:
               max:
                 {memory: 6000Mi, vcore: 1200m}
             properties:
-              # preemption.policy: fence
+              preemption.policy: fence
               preemption.delay: 10s
             queues:
             - name: tenant-a
