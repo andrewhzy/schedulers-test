@@ -1,5 +1,5 @@
 # set up yunikorn queue
-### set up some queues under a parent queue with the same priority, e.g. 2 queeus like this:
+### set up some child queues under a parent queue with the same priority, e.g. a paremt queue and 2 child queeus like this:
 ![alt text](image-4.png)
 ![alt text](image-14.png)
 ![alt text](image-13.png)
@@ -53,7 +53,7 @@ data:
 ```
 
 # test long-runing large and short-running small spark jobs
-### submit long-runing large spark job and put it on a low-priority queue, e.g.
+### submit long-runing large spark job and put it on a child queue, e.g.
 ```
 argo submit spark-pi-workflow.yaml \
     -p image=apache/spark:3.5.7 \
@@ -63,7 +63,7 @@ argo submit spark-pi-workflow.yaml \
     -p queue=root.ns-a.tenant-a \
     -p scheduler=yunikorn
 ```
-### submit short-running small spark job and put it on a normal-priority queue, e.g.
+### submit short-running small spark job and put it on a child queue, e.g.
 ```
 argo submit spark-pi-workflow.yaml \
     -p image=apache/spark:3.5.7 \

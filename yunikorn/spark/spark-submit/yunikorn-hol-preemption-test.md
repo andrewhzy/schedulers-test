@@ -42,7 +42,7 @@ child: root.ns-a.tenant-b
 ![alt text](image-10.png)
 
 ### 3. simulate a large long-running spark job which consume all(almost) allocated resources:
-specify yunikorn as the scheduler and the queue with low priority
+specify yunikorn as the scheduler and a child queue for scheduling
 ```
 argo submit spark-pi-workflow.yaml \
     -p image=apache/spark:3.5.7 \
@@ -56,7 +56,7 @@ wait for some momemt will see:
 ![alt text](image-11.png)
 
 ### 4. simulate a small short spark job, which we expect low latency:
-specify yunikorn as the scheduler and the queue with normal priority, which is higher than the previous low priority queue, so can preempt pods from that queue
+specify yunikorn as the scheduler and another child queue for scheduling
 ```
 argo submit spark-pi-workflow.yaml \
     -p image=apache/spark:3.5.7 \
@@ -68,10 +68,10 @@ argo submit spark-pi-workflow.yaml \
 ```
 wait for some momemt will see:
 ![alt text](image-12.png)
-1. sompe of the exec pods of the low priority job was preempted, and new ones created but in pending state.
-2. the normal priority spark job was able to run, because it runs on a different queue with higher priority, and can preempt pods on the low priority queue when it consumes resources less than its guaranteed.
+1. sompe of the exec pods of the first job was preempted, and new ones created but in pending state.
+2. the 2nd spark job was able to run, because it runs on a different queue with guaranteed resource quota. and can preempt pods on a queue which consumes more the guaranteed
 
 ## conclusion: 
-with yunikorn scheduler and prioritized queues, HOL blocking can be resolved, large long-running spark jobs running on low priority queues can be preempted by jobs running on higher priority queues. thus jobs with higher priority can get resource to execute.
+with yunikorn scheduler and child queues with guaranteed resource quota, and preemption enabled, HOL blocking can be resolved, large long-running spark jobs running on queues consuming more than guaranteed can be preempted by jobs running on another queue that does not fulfill its guaranteed resource quota.
 
 
