@@ -21,7 +21,7 @@ data:
               max:
                 {memory: 6000Mi, vcore: 1200m}
             properties:
-              preemption.policy: fence
+              # preemption.policy: fence
               preemption.delay: 10s
             queues:
             - name: tenant-a
@@ -42,10 +42,3 @@ data:
                   {memory: 3000Mi, vcore: 600m}
               properties:
                 priority.offset: "0"
-            # - name: tenant-c
-            #   submitacl: '*'
-            #   resources:
-            #     guaranteed:
-            #       {memory: 3500Mi, vcore: 1200m}
-            #   properties:
-            #     priority.offset: "1000"

@@ -1,10 +1,9 @@
 # set up yunikorn queue
-### set up a queue with low priority, e.g.
-![alt text](image-6.png)
-### set up a queue with normal priority, e.g.
-![alt text](image-5.png)
+### set up some queues under a parent queue with the same priority, e.g. 2 queeus like this:
+![alt text](image-14.png)
+![alt text](image-13.png)
 
-### yunikorn-config example
+### a simple yunikorn-config example
 ```
 apiVersion: v1
 kind: ConfigMap
@@ -29,10 +28,10 @@ data:
               max:
                 {memory: 6000Mi, vcore: 1200m}
             properties:
-              preemption.policy: fence
+              # preemption.policy: fence
               preemption.delay: 10s
             queues:
-            - name: tenant-normal-priority
+            - name: tenant-a
               submitacl: '*'
               resources:
                 max:
@@ -41,7 +40,7 @@ data:
                   {memory: 3000Mi, vcore: 600m}
               properties:
                 priority.offset: "0"
-            - name: tenant-low-priority
+            - name: tenant-b
               submitacl: '*'
               resources:
                 max:
@@ -49,7 +48,7 @@ data:
                 guaranteed:
                   {memory: 3000Mi, vcore: 600m}
               properties:
-                priority.offset: "-1000"
+                priority.offset: "0"
 ```
 
 # test long-runing large and short-running small spark jobs
@@ -60,7 +59,7 @@ argo submit spark-pi-workflow.yaml \
     -p partitions=100000 \
     -p namespace=yunikorn-spark-submit \
     -p executors=6 \
-    -p queue=root.ns-a.tenant-low-priority \
+    -p queue=root.ns-a.tenant-a \
     -p scheduler=yunikorn
 ```
 ### submit short-running small spark job and put it on a normal-priority queue, e.g.
@@ -70,7 +69,7 @@ argo submit spark-pi-workflow.yaml \
     -p partitions=1000 \
     -p namespace=yunikorn-spark-submit \
     -p executors=2 \
-    -p queue=root.ns-a.tenant-normal-priority \
+    -p queue=root.ns-a.tenant-b \
     -p scheduler=yunikorn
 ```
 
@@ -144,3 +143,4 @@ spec:
       - local:///opt/spark/examples/src/main/python/pi.py
       - "{{workflow.parameters.partitions}}"
 ```
+note: set spark.kubernetes.driver.label.yunikorn.apache.org/allow-preemption=false, to prevent the driver from being preempted.
