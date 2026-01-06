@@ -21,7 +21,7 @@ data:
               max:
                 {memory: 6000Mi, vcore: 1200m}
             properties:
-              # preemption.policy: fence
+              preemption.policy: fence
               preemption.delay: 10s
             queues:
             - name: tenant-a

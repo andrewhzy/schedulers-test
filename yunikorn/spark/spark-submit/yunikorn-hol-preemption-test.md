@@ -34,14 +34,14 @@ with default scheduler and limited resources, there will be HOL blocking, large 
 ![alt text](image-3.png)
 
 ### 2. install yunikorn and config queues
-set up 2 queues:
-
+set up parent queue:
+![alt text](image-4.png)
+and 2 child queues:
 root.ns-a.tenant-a
 -- resource: max{memory: 6000Mi, vcore: 1200m}, guaranteed{memory: 3000Mi, vcore: 600m}
-
+![alt text](image-7.png)
 root.ns-a.tenant-b
 -- resource: max{memory: 6000Mi, vcore: 1200m}, guaranteed{memory: 3000Mi, vcore: 600m}
-![alt text](image-7.png)
 ![alt text](image-10.png)
 
 ### 3. simulate a large long-running spark job which consume all(almost) allocated resources:
