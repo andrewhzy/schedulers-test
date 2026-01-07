@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: yunikorn-configs
+  namespace: yunikorn
+data:
+  queues.yaml: |
+    partitions:
+      - name: default
+        placementrules:
+        - name: provided
+        - name: fixed
+          value: root.default
+        queues:
+        - name: root
+          queues:
+          - name: default
+            submitacl: '*'
+            resources:
+              max:
+                {memory: 6Gi, vcore: 1200m}
+          - name: ns-a
+            resources:
+              max:
+                {memory: 6Gi, vcore: 1200m}
+            properties:
+              preemption.policy: fence
+              preemption.delay: 10s
+            queues:
+            - name: tenant-a
+              submitacl: '*'
+              resources:
+                max:
+                  {memory: 6000Mi, vcore: 1200m}
+                guaranteed:
+                  {memory: 3000Mi, vcore: 600m}
+              properties:
+                priority.offset: "0"
+            - name: tenant-b
+              submitacl: '*'
+              resources:
+                max:
+                  {memory: 6000Mi, vcore: 1200m}
+                guaranteed:
+                  {memory: 3000Mi, vcore: 600m}
+              properties:
+                priority.offset: "0"
