@@ -7,9 +7,9 @@ spec:
   type: Scala
   mode: cluster
   image: "apache/spark:3.5.7"
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
   mainClass: org.apache.spark.examples.SparkPi
-  mainApplicationFile: "local:///opt/spark/examples/jars/spark-examples_2.12-v3.5.7.jar"
+  mainApplicationFile: local:///opt/spark/examples/jars/spark-examples.jar
   sparkVersion: "3.5.7"
   batchScheduler: "volcano"   #Note: the batch scheduler name must be specified with `volcano`
   restartPolicy:
