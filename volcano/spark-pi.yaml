@@ -10,6 +10,8 @@ spec:
   imagePullPolicy: IfNotPresent
   mainClass: org.apache.spark.examples.SparkPi
   mainApplicationFile: local:///opt/spark/examples/jars/spark-examples.jar
+  arguments:
+    - "10000"  # Number of partitions (default is 2)
   sparkVersion: "3.5.7"
   batchScheduler: "volcano"   #Note: the batch scheduler name must be specified with `volcano`
   restartPolicy:
@@ -20,9 +22,9 @@ spec:
         path: "/tmp"
         type: Directory
   driver:
-    cores: 1
-    coreLimit: "1200m"
-    memory: "512m"        
+    coreRequest: "100m"
+    coreLimit: "1000m"
+    memory: "2g"        
     labels:
       version: 3.5.7
     serviceAccount: spark
@@ -30,9 +32,10 @@ spec:
       - name: "test-volume"
         mountPath: "/tmp"
   executor:
-    cores: 1
-    instances: 1
-    memory: "512m"    
+    coreRequest: "100m"
+    coreLimit: "1000m"
+    instances: 8
+    memory: "512m"
     labels:
       version: 3.5.7
     volumeMounts:
