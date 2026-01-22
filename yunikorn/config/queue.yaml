@@ -1,0 +1,95 @@
+
+    partitions:
+      - name: default
+        placementrules:
+        - name: provided
+        - name: fixed
+          value: root.default
+        queues:
+        - name: default
+          submitacl: '*'
+          resources:
+            max:
+              {memory: 1Gi, vcore: 500m}
+        - name: sit
+          submitacl: '*'
+          queues:
+          - name: ns-1
+            # resources:
+            #   guaranteed:
+            #     {memory: 3Gi, vcore: 600m}
+            #   max:
+            #     {memory: 6Gi, vcore: 1200m}
+            queues:
+            - name: tenant-1
+              # resources:
+              #   max:
+              #     {memory: 6000Mi, vcore: 1200m}
+              #   guaranteed:
+              #     {memory: 3000Mi, vcore: 600m}
+            - name: tenant-2
+              # resources:
+              #   max:
+              #     {memory: 6000Mi, vcore: 1200m}
+              #   guaranteed:
+              #     {memory: 3000Mi, vcore: 600m}
+          - name: ns-1
+            # resources:
+            #   guaranteed:
+            #     {memory: 3Gi, vcore: 600m}
+            #   max:
+            #     {memory: 6Gi, vcore: 1200m}
+            queues:
+            - name: tenant-1
+              # resources:
+              #   max:
+              #     {memory: 6000Mi, vcore: 1200m}
+              #   guaranteed:
+              #     {memory: 3000Mi, vcore: 600m}
+            - name: tenant-2
+              # resources:
+              #   max:
+              #     {memory: 6000Mi, vcore: 1200m}
+              #   guaranteed:
+              #     {memory: 3000Mi, vcore: 600m}
+        - name: uat
+          submitacl: '*'
+          queues:
+          - name: ns-1
+            # resources:
+            #   guaranteed:
+            #     {memory: 3Gi, vcore: 600m}
+            #   max:
+            #     {memory: 6Gi, vcore: 1200m}
+            queues:
+            - name: tenant-1
+              # resources:
+              #   max:
+              #     {memory: 6000Mi, vcore: 1200m}
+              #   guaranteed:
+              #     {memory: 3000Mi, vcore: 600m}
+            - name: tenant-2
+              # resources:
+              #   max:
+              #     {memory: 6000Mi, vcore: 1200m}
+              #   guaranteed:
+              #     {memory: 3000Mi, vcore: 600m}
+          - name: ns-1
+            # resources:
+            #   guaranteed:
+            #     {memory: 3Gi, vcore: 600m}
+            #   max:
+            #     {memory: 6Gi, vcore: 1200m}
+            queues:
+            - name: tenant-1
+              # resources:
+              #   max:
+              #     {memory: 6000Mi, vcore: 1200m}
+              #   guaranteed:
+              #     {memory: 3000Mi, vcore: 600m}
+            - name: tenant-2
+              # resources:
+              #   max:
+              #     {memory: 6000Mi, vcore: 1200m}
+              #   guaranteed:
+              #     {memory: 3000Mi, vcore: 600m}

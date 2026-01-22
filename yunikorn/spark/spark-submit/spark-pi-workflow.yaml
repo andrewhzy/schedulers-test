@@ -18,9 +18,38 @@ spec:
       value: 1
     - name: scheduler
       value: default-scheduler
+    - name: serviceAccountName
+      value: spark
+    - name: driverRequestCores
+      value: "0.2"
+    - name: driverLimitCores
+      value: "0.5"
+    - name: driverMemory
+      value: 1024m
+    - name: driverMemoryOverhead
+      value: 200m
+    - name: executorRequestCores
+      value: "0.2"
+    - name: executorLimitCores
+      value: "0.5"
+    - name: executorMemory
+      value: 512m
+    - name: executorMemoryOverhead
+      value: 100m
+    - name: driverPriorityClass
+      value: ""
+    - name: executorPriorityClass
+      value: ""
+    - name: allowPreemption
+      value: "false"
   templates:
   - name: spark-pi
-    serviceAccountName: spark
+    metadata:
+      labels:
+        queue: "{{workflow.parameters.queue}}"
+      annotations:
+        yunikorn.apache.org/allow-preemption: "{{workflow.parameters.allowPreemption}}"
+    serviceAccountName: "{{workflow.parameters.serviceAccountName}}"
     container:
       image: "{{workflow.parameters.image}}"
       command: ["/opt/spark/bin/spark-submit"]
@@ -36,32 +65,36 @@ spec:
       - --conf
       - spark.kubernetes.namespace={{workflow.parameters.namespace}}
       - --conf
-      - spark.kubernetes.authenticate.driver.serviceAccountName=spark
+      - spark.kubernetes.authenticate.driver.serviceAccountName={{workflow.parameters.serviceAccountName}}
       - --conf
       - spark.executor.instances={{workflow.parameters.executors}}
       - --conf
-      - spark.kubernetes.driver.request.cores=0.2
+      - spark.kubernetes.driver.request.cores={{workflow.parameters.driverRequestCores}}
       - --conf
-      - spark.kubernetes.driver.limit.cores=0.5
+      - spark.kubernetes.driver.limit.cores={{workflow.parameters.driverLimitCores}}
       - --conf
-      - spark.driver.memory=1024m
+      - spark.driver.memory={{workflow.parameters.driverMemory}}
       - --conf
-      - spark.driver.memoryOverhead=200m
+      - spark.driver.memoryOverhead={{workflow.parameters.driverMemoryOverhead}}
       - --conf
-      - spark.kubernetes.executor.request.cores=0.2
+      - spark.kubernetes.executor.request.cores={{workflow.parameters.executorRequestCores}}
       - --conf
-      - spark.kubernetes.executor.limit.cores=0.5
+      - spark.kubernetes.executor.limit.cores={{workflow.parameters.executorLimitCores}}
       - --conf
-      - spark.executor.memory=512m
+      - spark.executor.memory={{workflow.parameters.executorMemory}}
       - --conf
-      - spark.executor.memoryOverhead=100m
+      - spark.executor.memoryOverhead={{workflow.parameters.executorMemoryOverhead}}
       - --conf
       - spark.kubernetes.scheduler.name={{workflow.parameters.scheduler}}
       - --conf
       - spark.kubernetes.driver.label.queue={{workflow.parameters.queue}}
       - --conf
-      - spark.kubernetes.driver.label.yunikorn.apache.org/allow-preemption=false
+      - spark.kubernetes.driver.annotation.yunikorn.apache.org/allow-preemption={{workflow.parameters.allowPreemption}}
+      - --conf
+      - spark.kubernetes.driver.priorityClassName={{workflow.parameters.driverPriorityClass}}
       - --conf
       - spark.kubernetes.executor.label.queue={{workflow.parameters.queue}}
+      - --conf
+      - spark.kubernetes.executor.priorityClassName={{workflow.parameters.executorPriorityClass}}
       - local:///opt/spark/examples/src/main/python/pi.py
       - "{{workflow.parameters.partitions}}"

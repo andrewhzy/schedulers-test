@@ -1,0 +1,29 @@
+apiVersion: scheduling.volcano.sh/v1beta1
+kind: Queue
+metadata:
+  creationTimestamp: "2024-12-30T09:31:12Z"
+  generation: 1
+  name: test
+  resourceVersion: "987630"
+  uid: 88babd01-c83f-4010-9701-c2471c1dd040
+spec:
+  capability:
+    cpu: "8"
+    memory: 16Gi
+  # deserved field is only used by capacity plugin
+  deserved:
+    cpu: "4"
+    memory: 8Gi
+  guarantee:
+    resource:
+      cpu: "2"
+      memory: 4Gi
+  priority: 100
+  reclaimable: true
+  # weight field is only used by proportion plugin
+  weight: 1
+status:
+  allocated:
+    cpu: "0"
+    memory: "0"
+  state: Open

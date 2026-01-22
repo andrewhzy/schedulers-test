@@ -9,4 +9,4 @@ web:
   image:
     pullPolicy: IfNotPresent
 
-embedAdmissionController: false
+# embedAdmissionController: false

@@ -1,0 +1,10 @@
+# queue.yaml
+apiVersion: scheduling.volcano.sh/v1beta1
+kind: Queue
+metadata:
+  name: development-queue
+spec:
+  weight: 1 # Relative weight for scheduling priority among queues
+  reclaimable: false # If true, jobs in other queues can reclaim resources in this queue
+  capability:
+    cpu: 2

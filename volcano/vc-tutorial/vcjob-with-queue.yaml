@@ -1,0 +1,30 @@
+# vcjob-with-queue.yaml
+apiVersion: batch.volcano.sh/v1alpha1
+kind: Job
+metadata:
+  name: job-with-custom-queue
+spec:
+  minAvailable: 1
+  schedulerName: volcano
+  queue: development-queue # Assign this job to our custom queue
+  tasks:
+    - replicas: 1
+      name: custom-queue-task
+      policies:
+      - event: TaskCompleted
+        action: CompleteJob
+      template:
+        spec:
+          containers:
+            - command:
+              - sh
+              - -c
+              - 'echo "Running in custom queue"; sleep 100; echo "Done!"'
+              image: busybox:latest
+              name: busybox-in-queue
+              resources:
+                requests:
+                  cpu: 1
+                limits:
+                  cpu: 1
+          restartPolicy: Never

@@ -3,8 +3,7 @@ kind: Workflow
 metadata:
   generateName: dag-diamond-
 spec:
-  entrypoint: diamond
-  onExit: exit-handler   
+  entrypoint: main
   templates:
   - name: echo
     inputs:
@@ -12,23 +11,21 @@ spec:
       - name: message
     container:
       image: busybox
-      command: [echo]
-      args: ["{{inputs.parameters.message}}"]
-  - name: daemon-pod
-    daemon: true
+      command: [echo, "{{inputs.parameters.message}}"]
+  
+  - name: long-running-pod
+    inputs:
+      parameters:
+      - name: duration
     container:
       image: busybox
       command: [sh, -c]
-      args: ["echo 'Daemon started'; sleep 360000"]
+      args: ["echo 'Pod started'; sleep {{inputs.parameters.duration}}; echo 'Pod ending'"]
   
   - name: diamond
     dag:
       tasks:
-      - name: daemon
-        template: daemon-pod
-      
       - name: A
-        dependencies: [daemon]
         template: echo
         arguments:
           parameters: [{name: message, value: A}]
@@ -47,8 +44,21 @@ spec:
         template: echo
         arguments:
           parameters: [{name: message, value: D}]
-  - name: exit-handler
+  
+  - name: main
+    dag:
+      tasks:
+      - name: long-pod
+        template: long-running-pod
+        arguments:
+          parameters: [{name: duration, value: "3600"}]
+      - name: workflow
+        template: diamond
+        dependencies: [long-pod]
+    
+    onExit: cleanup
+  
+  - name: cleanup
     container:
       image: busybox
-      command: [sh, -c]
-      args: ["echo send e-mail: {{workflow.name}} {{workflow.status}} {{workflow.duration}}"]
+      command: [echo, "Cleanup running, long-pod still alive"]

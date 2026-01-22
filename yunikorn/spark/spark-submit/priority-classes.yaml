@@ -1,0 +1,15 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: spark-driver-high-priority
+value: 1000
+globalDefault: false
+description: "High priority for Spark drivers and Argo workflow pods - should not be preempted"
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: spark-executor-normal-priority
+value: 500
+globalDefault: false
+description: "Normal priority for Spark executors - can be preempted if needed"
