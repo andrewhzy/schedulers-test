@@ -6,8 +6,9 @@ spec:
   entrypoint: spark-pi
   arguments:
     parameters:
+    # ========== Common ==========
     - name: queue
-      value: root.default  # default value
+      value: root.default
     - name: image
       value: apache/spark:3.5.7
     - name: namespace
@@ -20,6 +21,9 @@ spec:
       value: default-scheduler
     - name: serviceAccountName
       value: spark
+    - name: allowPreemption
+      value: "false"
+    # ========== Spark Driver ==========
     - name: driverRequestCores
       value: "0.2"
     - name: driverLimitCores
@@ -28,6 +32,9 @@ spec:
       value: 1024m
     - name: driverMemoryOverhead
       value: 200m
+    - name: driverPriorityClass
+      value: ""
+    # ========== Spark Executor ==========
     - name: executorRequestCores
       value: "0.2"
     - name: executorLimitCores
@@ -36,16 +43,13 @@ spec:
       value: 512m
     - name: executorMemoryOverhead
       value: 100m
-    - name: driverPriorityClass
-      value: ""
     - name: executorPriorityClass
       value: ""
-    - name: allowPreemption
-      value: "false"
   templates:
   - name: spark-pi
     metadata:
       labels:
+        applicationId: "{{workflow.name}}"
         queue: "{{workflow.parameters.queue}}"
       annotations:
         yunikorn.apache.org/allow-preemption: "{{workflow.parameters.allowPreemption}}"
@@ -87,11 +91,15 @@ spec:
       - --conf
       - spark.kubernetes.scheduler.name={{workflow.parameters.scheduler}}
       - --conf
+      - spark.kubernetes.driver.label.applicationId={{workflow.name}}
+      - --conf
       - spark.kubernetes.driver.label.queue={{workflow.parameters.queue}}
       - --conf
       - spark.kubernetes.driver.annotation.yunikorn.apache.org/allow-preemption={{workflow.parameters.allowPreemption}}
       - --conf
       - spark.kubernetes.driver.priorityClassName={{workflow.parameters.driverPriorityClass}}
+      - --conf
+      - spark.kubernetes.executor.label.applicationId={{workflow.name}}
       - --conf
       - spark.kubernetes.executor.label.queue={{workflow.parameters.queue}}
       - --conf
