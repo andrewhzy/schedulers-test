@@ -1,95 +1,47 @@
 
     partitions:
       - name: default
+        preemption:
+          enabled: true
         placementrules:
         - name: provided
         - name: fixed
-          value: root.default
+          value: default
+          create: true
+          parent:
+            name: tag
+            value: namespace
+            create: false
+            parent:
+              name: fixed
+              value: root.yunikorn
         queues:
-        - name: default
-          submitacl: '*'
-          resources:
-            max:
-              {memory: 1Gi, vcore: 500m}
-        - name: sit
+        - name: yunikorn
           submitacl: '*'
           queues:
-          - name: ns-1
-            # resources:
-            #   guaranteed:
-            #     {memory: 3Gi, vcore: 600m}
-            #   max:
-            #     {memory: 6Gi, vcore: 1200m}
+          - name: yunikorn-spark-operator
+            properties:
+              priority.offset: "-1000"
+            resources:
+              guaranteed:
+                {memory: 2Gi, vcore: 1000m}
+              max:
+                {memory: 3Gi, vcore: 1500m}
             queues:
             - name: tenant-1
-              # resources:
-              #   max:
-              #     {memory: 6000Mi, vcore: 1200m}
-              #   guaranteed:
-              #     {memory: 3000Mi, vcore: 600m}
-            - name: tenant-2
-              # resources:
-              #   max:
-              #     {memory: 6000Mi, vcore: 1200m}
-              #   guaranteed:
-              #     {memory: 3000Mi, vcore: 600m}
-          - name: ns-1
-            # resources:
-            #   guaranteed:
-            #     {memory: 3Gi, vcore: 600m}
-            #   max:
-            #     {memory: 6Gi, vcore: 1200m}
+              resources:
+                guaranteed:
+                  {memory: 1Gi, vcore: 500m}
+          - name: yunikorn-spark-submit
+            properties:
+              priority.offset: "-1000"
+            resources:
+              guaranteed:
+                {memory: 2Gi, vcore: 1000m}
+              max:
+                {memory: 3Gi, vcore: 1500m}
             queues:
             - name: tenant-1
-              # resources:
-              #   max:
-              #     {memory: 6000Mi, vcore: 1200m}
-              #   guaranteed:
-              #     {memory: 3000Mi, vcore: 600m}
-            - name: tenant-2
-              # resources:
-              #   max:
-              #     {memory: 6000Mi, vcore: 1200m}
-              #   guaranteed:
-              #     {memory: 3000Mi, vcore: 600m}
-        - name: uat
-          submitacl: '*'
-          queues:
-          - name: ns-1
-            # resources:
-            #   guaranteed:
-            #     {memory: 3Gi, vcore: 600m}
-            #   max:
-            #     {memory: 6Gi, vcore: 1200m}
-            queues:
-            - name: tenant-1
-              # resources:
-              #   max:
-              #     {memory: 6000Mi, vcore: 1200m}
-              #   guaranteed:
-              #     {memory: 3000Mi, vcore: 600m}
-            - name: tenant-2
-              # resources:
-              #   max:
-              #     {memory: 6000Mi, vcore: 1200m}
-              #   guaranteed:
-              #     {memory: 3000Mi, vcore: 600m}
-          - name: ns-1
-            # resources:
-            #   guaranteed:
-            #     {memory: 3Gi, vcore: 600m}
-            #   max:
-            #     {memory: 6Gi, vcore: 1200m}
-            queues:
-            - name: tenant-1
-              # resources:
-              #   max:
-              #     {memory: 6000Mi, vcore: 1200m}
-              #   guaranteed:
-              #     {memory: 3000Mi, vcore: 600m}
-            - name: tenant-2
-              # resources:
-              #   max:
-              #     {memory: 6000Mi, vcore: 1200m}
-              #   guaranteed:
-              #     {memory: 3000Mi, vcore: 600m}
+              resources:
+                guaranteed:
+                  {memory: 1Gi, vcore: 500m}

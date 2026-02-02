@@ -11,6 +11,16 @@ data:
           enabled: true
         placementrules:
         - name: provided
+        - name: fixed
+          value: default
+          create: true
+          parent:
+            name: tag
+            value: namespace
+            create: false
+            parent:
+              name: fixed
+              value: root.yunikorn
         queues:
         - name: yunikorn
           submitacl: '*'
