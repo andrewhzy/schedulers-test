@@ -8,7 +8,7 @@ spec:
     parameters:
     # ========== Common ==========
     - name: queue
-      value: root.default
+      value: root.yunikorn.default
     - name: image
       value: apache/spark:3.5.7
     - name: namespace
@@ -18,7 +18,7 @@ spec:
     - name: executors
       value: 1
     - name: scheduler
-      value: default-scheduler
+      value: yunikorn
     - name: serviceAccountName
       value: spark
     - name: allowPreemption
@@ -53,6 +53,7 @@ spec:
         queue: "{{workflow.parameters.queue}}"
       annotations:
         yunikorn.apache.org/allow-preemption: "{{workflow.parameters.allowPreemption}}"
+        # yunikorn.apache.org/user.info: "{{workflow.parameters.serviceAccountName}}"
     serviceAccountName: "{{workflow.parameters.serviceAccountName}}"
     container:
       image: "{{workflow.parameters.image}}"

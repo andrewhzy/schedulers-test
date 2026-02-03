@@ -4,6 +4,8 @@ metadata:
   name: yunikorn-configs
   namespace: yunikorn
 data:
+  # log.level: "DEBUG"
+  admissionController.accessControl.bypassAuth: "true"
   queues.yaml: |
     partitions:
       - name: default
@@ -11,43 +13,62 @@ data:
           enabled: true
         placementrules:
         - name: provided
+          # create: false
         - name: fixed
           value: default
           create: true
+          # filter:
+          #   type: allow
+          #   users:
+          #     - spark
           parent:
             name: tag
             value: namespace
-            create: false
+            # create: true
             parent:
               name: fixed
               value: root.yunikorn
+        - name: fixed
+          value: root.yunikorn.default
         queues:
-        - name: yunikorn
+        - name: root
           submitacl: '*'
-          queues:
-          - name: yunikorn-spark-operator
-            properties:
-              priority.offset: "-1000"
-            resources:
-              guaranteed:
-                {memory: 2Gi, vcore: 1000m}
-              max:
-                {memory: 3Gi, vcore: 1500m}
+          queues: 
+          # - name: default
+          #   resources:
+          #     guaranteed:
+          #       {memory: 1Gi, vcore: 500m}
+          - name: yunikorn
+            parent: true
+            childtemplate:
+              resources:
+                max:
+                  vcore: 1500m
+                  memory: 3Gi
             queues:
-            - name: tenant-1
+            - name: yunikorn-spark-operator
               resources:
                 guaranteed:
-                  {memory: 1Gi, vcore: 500m}
-          - name: yunikorn-spark-submit
-            properties:
-              priority.offset: "-1000"
-            resources:
-              guaranteed:
-                {memory: 2Gi, vcore: 1000m}
-              max:
-                {memory: 3Gi, vcore: 1500m}
-            queues:
-            - name: tenant-1
+                  {memory: 2Gi, vcore: 1000m}
+                max:
+                  {memory: 3Gi, vcore: 1500m}
+              queues:
+              - name: tenant-1
+                resources:
+                  guaranteed:
+                    {memory: 1Gi, vcore: 500m}
+            - name: yunikorn-spark-submit
+              resources:
+                guaranteed:
+                  {memory: 2Gi, vcore: 1000m}
+                max:
+                  {memory: 3Gi, vcore: 1500m}
+              queues:
+              - name: tenant-1
+                resources:
+                  guaranteed:
+                    {memory: 1Gi, vcore: 500m}
+            - name: default
               resources:
                 guaranteed:
                   {memory: 1Gi, vcore: 500m}
