@@ -69,6 +69,10 @@ data:
                   {memory: 3Gi, vcore: 1500m}
               queues:
               - name: tenant-1
+                properties:
+                  preemption.delay: "3s"
+                  preemption.policy: "default"
+                  priority.offset: "0"
                 resources:
                   guaranteed:
                     {memory: 1Gi, vcore: 500m}
@@ -94,6 +98,20 @@ data:
                   {memory: 3Gi, vcore: 1500m}
               queues:
               - name: tenant-1
+                properties:
+                  preemption.delay: "3s"
+                  preemption.policy: "default"
+                  priority.offset: "0"
+                resources:
+                  guaranteed:
+                    {memory: 1Gi, vcore: 500m}
+                  max:
+                    {memory: 3Gi, vcore: 1500m}
+              - name: tenant-2
+                properties:
+                  preemption.delay: "3s"
+                  preemption.policy: "default"
+                  priority.offset: "0"
                 resources:
                   guaranteed:
                     {memory: 1Gi, vcore: 500m}
