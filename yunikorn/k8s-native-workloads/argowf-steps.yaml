@@ -8,10 +8,16 @@ spec:
     parameters:
     - name: count
       value: "10"
-    - name: parallelism
-      value: "5"
     - name: sleep-seconds
-      value: "30"
+      value: "30000"
+    - name: cpu-request
+      value: "100m"
+    - name: cpu-limit
+      value: "1000m"
+    - name: memory-request
+      value: "128Mi"
+    - name: memory-limit
+      value: "1280Mi"
 
   templates:
   - name: main
@@ -34,6 +40,16 @@ spec:
     metadata:
       labels:
         applicationId: "{{workflow.name}}"
+    podSpecPatch: |
+      containers:
+        - name: main
+          resources:
+            requests:
+              cpu: "{{workflow.parameters.cpu-request}}"
+              memory: "{{workflow.parameters.memory-request}}"
+            limits:
+              cpu: "{{workflow.parameters.cpu-limit}}"
+              memory: "{{workflow.parameters.memory-limit}}"
     container:
       image: busybox
       command: [sh, -c]

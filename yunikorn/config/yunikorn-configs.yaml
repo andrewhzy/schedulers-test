@@ -44,9 +44,10 @@ data:
             parent: true
             childtemplate:
               resources:
+                guaranteed:
+                  {memory: 1Gi, vcore: 500m}
                 max:
-                  vcore: 1500m
-                  memory: 3Gi
+                  {memory: 3Gi, vcore: 1500m}
             queues:
             - name: yunikorn-spark-operator
               resources:
@@ -59,6 +60,8 @@ data:
                 resources:
                   guaranteed:
                     {memory: 1Gi, vcore: 500m}
+                  max:
+                    {memory: 3Gi, vcore: 1500m}
             - name: yunikorn-spark-submit
               resources:
                 guaranteed:
@@ -70,7 +73,11 @@ data:
                 resources:
                   guaranteed:
                     {memory: 1Gi, vcore: 500m}
+                  max:
+                    {memory: 3Gi, vcore: 1500m}
             - name: default
               resources:
                 guaranteed:
                   {memory: 1Gi, vcore: 500m}
+                max:
+                  {memory: 3Gi, vcore: 1500m}
