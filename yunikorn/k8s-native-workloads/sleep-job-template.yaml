@@ -1,0 +1,55 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: sleep-job-template
+spec:
+  serviceAccountName: spark
+  entrypoint: create-job
+  arguments:
+    parameters:
+      - name: completions
+        value: "10"
+      - name: parallelism
+        value: "10"
+      - name: sleep-time
+        value: "10"
+      - name: image
+        value: "busybox"
+      - name: memory-limit
+        value: "64Mi"
+      - name: cpu-limit
+        value: "200m"
+      - name: memory-request
+        value: "32Mi"
+      - name: cpu-request
+        value: "100m"
+  templates:
+    - name: create-job
+      resource:
+        action: create
+        setOwnerReference: true
+        successCondition: status.succeeded == {{workflow.parameters.completions}}
+        failureCondition: status.failed > 0
+        manifest: |
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            generateName: sleep-job-
+          spec:
+            completions: {{workflow.parameters.completions}}
+            parallelism: {{workflow.parameters.parallelism}}
+            template:
+              spec:
+                restartPolicy: Never
+                containers:
+                  - name: sleep
+                    image: {{workflow.parameters.image}}
+                    command: [sh, -c]
+                    args: ["echo 'Starting sleep for {{workflow.parameters.sleep-time}}s'; sleep {{workflow.parameters.sleep-time}}; echo 'Done'"]
+                    resources:
+                      limits:
+                        memory: {{workflow.parameters.memory-limit}}
+                        cpu: {{workflow.parameters.cpu-limit}}
+                      requests:
+                        memory: {{workflow.parameters.memory-request}}
+                        cpu: {{workflow.parameters.cpu-request}}

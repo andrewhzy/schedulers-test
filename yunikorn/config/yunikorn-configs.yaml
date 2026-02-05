@@ -5,8 +5,8 @@ metadata:
   namespace: yunikorn
 data:
   log.level: "DEBUG"
-  # admissionController.accessControl.bypassAuth: "true"
   admissionController.accessControl.systemUsers: '^kubernetes-admin$'
+  admissionController.filtering.processNamespaces: "^yunikorn-"
   queues.yaml: |
     partitions:
       - name: default

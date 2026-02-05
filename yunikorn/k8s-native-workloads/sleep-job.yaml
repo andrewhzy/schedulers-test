@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sleep-job
+spec:
+  completions: 10
+  parallelism: 10
+  template:
+    metadata:
+      labels:
+        applicationId: sleep-job
+        queue: root.default
+      annotations:
+        yunikorn.apache.org/user.info: '{"user": "spark"}'
+    spec:
+      schedulerName: yunikorn
+      restartPolicy: Never
+      containers:
+        - name: sleep
+          image: busybox
+          command: [sh, -c]
+          args: ["echo 'Starting sleep for 10s'; sleep 10; echo 'Done'"]
+          resources:
+            limits:
+              memory: 64Mi
+              cpu: 200m
+            requests:
+              memory: 32Mi
+              cpu: 100m
