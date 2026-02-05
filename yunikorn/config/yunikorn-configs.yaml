@@ -4,8 +4,9 @@ metadata:
   name: yunikorn-configs
   namespace: yunikorn
 data:
-  # log.level: "DEBUG"
-  admissionController.accessControl.bypassAuth: "true"
+  log.level: "DEBUG"
+  # admissionController.accessControl.bypassAuth: "true"
+  admissionController.accessControl.systemUsers: '^kubernetes-admin$'
   queues.yaml: |
     partitions:
       - name: default
@@ -13,18 +14,23 @@ data:
           enabled: true
         placementrules:
         - name: provided
-          # create: false
-        - name: fixed
-          value: default
           create: true
-          # filter:
-          #   type: allow
-          #   users:
-          #     - spark
+          filter:
+            type: allow
+            users:
+              - spark
           parent:
             name: tag
             value: namespace
-            # create: true
+            parent:
+              name: fixed
+              value: root.yunikorn
+        - name: fixed
+          value: default
+          create: true
+          parent:
+            name: tag
+            value: namespace
             parent:
               name: fixed
               value: root.yunikorn
@@ -34,10 +40,6 @@ data:
         - name: root
           submitacl: '*'
           queues: 
-          # - name: default
-          #   resources:
-          #     guaranteed:
-          #       {memory: 1Gi, vcore: 500m}
           - name: yunikorn
             parent: true
             childtemplate:

@@ -12,6 +12,8 @@ spec:
       labels:
         applicationId: pi-job-${TIMESTAMP}
         queue: ${QUEUE}
+      annotations:
+        yunikorn.apache.org/user.info: '{"user": "spark"}'
     spec:
       schedulerName: yunikorn
       containers:

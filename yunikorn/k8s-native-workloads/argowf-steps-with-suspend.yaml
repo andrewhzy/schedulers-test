@@ -24,7 +24,6 @@ spec:
     metadata:
       labels:
         applicationId: "{{workflow.name}}"
-        queue: "root.default"
         schedulerName: yunikorn
     container:
       image: busybox
