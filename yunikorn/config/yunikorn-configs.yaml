@@ -5,7 +5,7 @@ metadata:
   namespace: yunikorn
 data:
   log.level: "DEBUG"
-  admissionController.accessControl.systemUsers: '^kubernetes-admin$'
+  admissionController.accessControl.systemUsers: '^kubernetes-admin$,^system:serviceaccount:argo:.*$'
   admissionController.filtering.processNamespaces: "^yunikorn-"
   queues.yaml: |
     partitions:
@@ -39,17 +39,29 @@ data:
         queues:
         - name: root
           submitacl: '*'
+          properties:
+            preemption.delay: "3s"
           queues: 
           - name: yunikorn
             parent: true
-            childtemplate:
+            queues:
+            - name: default
               resources:
                 guaranteed:
                   {memory: 1Gi, vcore: 500m}
                 max:
                   {memory: 3Gi, vcore: 1500m}
-            queues:
             - name: yunikorn-spark-operator
+              childtemplate:
+                properties:
+                  preemption.delay: "3s"
+                  preemption.policy: "default"
+                  priority.offset: "0"
+                resources:
+                  guaranteed:
+                    {memory: 1Gi, vcore: 500m}
+                  max:
+                    {memory: 3Gi, vcore: 1500m}
               resources:
                 guaranteed:
                   {memory: 2Gi, vcore: 1000m}
@@ -63,6 +75,18 @@ data:
                   max:
                     {memory: 3Gi, vcore: 1500m}
             - name: yunikorn-spark-submit
+              childtemplate:
+                properties:
+                  preemption.delay: "3s"
+                  preemption.policy: "default"
+                  priority.offset: "0"
+                resources:
+                  guaranteed:
+                    {memory: 1Gi, vcore: 500m}
+                  max:
+                    {memory: 3Gi, vcore: 1500m}
+              properties:
+                preemption.policy: "fence"
               resources:
                 guaranteed:
                   {memory: 2Gi, vcore: 1000m}
@@ -75,9 +99,3 @@ data:
                     {memory: 1Gi, vcore: 500m}
                   max:
                     {memory: 3Gi, vcore: 1500m}
-            - name: default
-              resources:
-                guaranteed:
-                  {memory: 1Gi, vcore: 500m}
-                max:
-                  {memory: 3Gi, vcore: 1500m}

@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: steps-
+  generateName: many-steps-
 spec:
   entrypoint: main
   arguments:
@@ -18,39 +18,56 @@ spec:
       value: "128Mi"
     - name: memory-limit
       value: "1280Mi"
+    - name: queue
+      value: root.yunikorn.yunikorn-spark-submit.tenant-1
 
   templates:
-  - name: main
-    steps:
-    - - name: run-many
-        template: sleep-pod
-        arguments:
-          parameters:
+    - name: main
+      inputs: {}
+      outputs: {}
+      metadata: {}
+      steps:
+        - - name: run-many
+            template: sleep-pod
+            arguments:
+              parameters:
+                - name: sleep-seconds
+                  value: "{{workflow.parameters.sleep-seconds}}"
+                - name: pod-id
+                  value: "{{item}}"
+            withSequence:
+              count: "{{workflow.parameters.count}}"
+    - name: sleep-pod
+      inputs:
+        parameters:
           - name: sleep-seconds
-            value: "{{workflow.parameters.sleep-seconds}}"
           - name: pod-id
-            value: "{{item}}"
-        withSequence:
-          count: "{{workflow.parameters.count}}"
-  - name: sleep-pod
-    inputs:
-      parameters:
-      - name: sleep-seconds
-      - name: pod-id
-    metadata:
-      labels:
-        applicationId: "{{workflow.name}}"
-    podSpecPatch: |
-      containers:
-        - name: main
-          resources:
-            requests:
-              cpu: "{{workflow.parameters.cpu-request}}"
-              memory: "{{workflow.parameters.memory-request}}"
-            limits:
-              cpu: "{{workflow.parameters.cpu-limit}}"
-              memory: "{{workflow.parameters.memory-limit}}"
-    container:
-      image: busybox
-      command: [sh, -c]
-      args: ["echo 'Pod {{inputs.parameters.pod-id}} sleeping for {{inputs.parameters.sleep-seconds}}s' && sleep {{inputs.parameters.sleep-seconds}}"]
+      outputs: {}
+      metadata:
+        labels:
+          applicationId: "{{workflow.name}}"
+          queue: "{{workflow.parameters.queue}}"
+        annotations:
+          yunikorn.apache.org/user.info: '{"user": "spark"}'
+      container:
+        name: ""
+        image: busybox
+        command:
+          - sh
+          - -c
+        args:
+          - echo 'Pod {{inputs.parameters.pod-id}} sleeping for
+            {{inputs.parameters.sleep-seconds}}s' && sleep
+            {{inputs.parameters.sleep-seconds}}
+        resources: {}
+      serviceAccountName: spark
+      podSpecPatch: |
+        containers:
+          - name: main
+            resources:
+              requests:
+                cpu: "{{workflow.parameters.cpu-request}}"
+                memory: "{{workflow.parameters.memory-request}}"
+              limits:
+                cpu: "{{workflow.parameters.cpu-limit}}"
+                memory: "{{workflow.parameters.memory-limit}}"

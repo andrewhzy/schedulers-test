@@ -6,6 +6,7 @@ spec:
   entrypoint: hello-world       # invoke the hello-world template
   templates:
     - name: hello-world         # name of the template
+      serviceAccountName: spark
       container:
         image: busybox
         command: [ echo ]
