@@ -53,7 +53,7 @@ spec:
         queue: "{{workflow.parameters.queue}}"
       annotations:
         yunikorn.apache.org/allow-preemption: "{{workflow.parameters.allowPreemption}}"
-        # yunikorn.apache.org/user.info: "{{workflow.parameters.serviceAccountName}}"
+        yunikorn.apache.org/user.info: '{"user": "{{workflow.parameters.serviceAccountName}}"}'
     serviceAccountName: "{{workflow.parameters.serviceAccountName}}"
     container:
       image: "{{workflow.parameters.image}}"
